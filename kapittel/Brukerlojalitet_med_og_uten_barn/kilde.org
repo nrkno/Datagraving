@@ -1,0 +1,157 @@
+#+PROPERTY: header-args:python :session *Python* :tangle kode.py :results silent
+* Forskjell i lojalitet for brukere med og uten barneprofiler
+
+Her skal jeg undersøke om det er en en forskjell i lojaliteten mellom brukere som er eier av én eller flere barneprofiler og brukere som ikke er det. Jeg vil gjøre det separat for NRK TV, NRK Radio og NRK.no.
+** Hovedfunn
+Når jeg utfører testen for at andelen høylojale brukere er større for brukere med barneprofiler enn brukere uten barneprofiler, finner jeg:
+- NRK TV 
+** Fullstendig gjennomgang
+#+name: spørring
+#+begin_src bigquery
+  WITH
+    GL AS ( -- grunnlag
+       SELECT nrkService, loyaltyGroup.groupName, profileCount, COUNT(nrkUserId) brukere
+         FROM `nrk-datahub.snowplow_aggregate.rfv_v01` r
+              JOIN `nrk-datahub.prod.registered_users_v01` USING(nrkUserId)
+              LEFT JOIN `nrk-datahub.prod.registered_users_persons_v01` p ON r.nrkUserId = p.id
+        WHERE partitionDate = CURRENT_DATE - 1
+          AND userOrProfile = 'user'
+          AND nrkService IN ('nrkno', 'nrktv', 'nrkradio', 'nrksuper')
+        GROUP BY ALL),
+
+    GA AS ( -- gruppeaggreagat
+      SELECT DISTINCT nrkService, groupName, profileCount,
+             SUM(brukere) OVER(PARTITION BY nrkService, profileCount) `Brukere per gruppe`,
+             brukere / SUM(brukere) OVER(PARTITION BY nrkService, profileCount) Andel
+        FROM GL)
+      
+  SELECT *
+    FROM GA
+         PIVOT(ANY_VALUE(Andel) FOR groupName IN ('Fan', 'Fast Følge', 'Langdistanse', 'One-Night-Stand', 'Slår opp'))
+   ORDER BY 1, 2
+#+end_src
+
+#+begin_src python
+  import pandas as pd
+  import matplotlib.pyplot as plt
+  import pandas_gbq
+  import numpy as np
+  from scipy.stats import norm
+#+end_src
+
+#+begin_src python :noweb yes :exports none
+  spørring = """
+  <<spørring>>
+  """
+#+end_src
+
+#+begin_src python
+  df = pandas_gbq.read_gbq(spørring)
+#+end_src
+
+Først sjekker jeg hvor mange brukere det er med og uten barneprofiler.
+#+begin_src python :results replace
+  df[["profileCount","Brukere per gruppe"]].drop_duplicates()
+#+end_src
+
+#+RESULTS:
+#+begin_example
+    profileCount  Brukere per gruppe
+0           <NA>                   1
+1              0             1766964
+2              1              153135
+3              2               74183
+4              3               18600
+5              4                3449
+6              5                 812
+7              6                 305
+8              7                 142
+9              8                  85
+10             9                  56
+11            10                  31
+12            11                  60
+#+end_example
+
+Totalt er det src_python[:results replace]{f"{df[["profileCount","Brukere per gruppe"]].drop_duplicates().iloc[1,1]:_}"} uten noen barneprofiler og src_python[:results replace]{f"{df[["profileCount","Brukere per gruppe"]].drop_duplicates().iloc[2:,1].sum():_}"} med minst én barneprofil.
+
+Fordelingen av brukere på lojalitetsgrupper og antall barneprofiler kan vi tegne opp silk:
+
+#+begin_src python :results replace link file :file figurer/lojalitet.png
+  fig,axs = plt.subplots(2,2,figsize=(11,7), layout="constrained")
+  for s,ax in zip(df.nrkService.unique(), [ax for r in axs for ax in r]):
+      plt_df = df[~df.profileCount.isna() & (df.nrkService == s)]
+      ax.set_title(s)
+      for k in plt_df.columns[3:]:
+          ax.plot(plt_df.profileCount, plt_df[k], "o", alpha=.6)
+          
+  fig.legend(ax.get_lines(), plt_df.columns[3:], loc="outside center right")
+  fig
+#+end_src
+
+#+RESULTS:
+[[file:figurer/lojalitet.png]]
+
+Ut fra figuren er det ikke noen tydelig indikasjon på at brukere med barneprofiler er mer lojale. Det ville i så fall vært en større andel som brukere blant Fan og Fast følge for brukere med barneprofiler. For å kunne gjøre en sikrere konklusjon, utfører jeg en statistisk test som sammenligner andelene for hver lojalitetsgruppe for brukere med og uten barneprofiler. Dette gjør jeg på hver tjeneste untatt NRK Super.
+
+Nullhypotesen H_0 er at gruppene Fan og Fast følge ikke skiller seg fra hverandre for brukere med og uten barneprofiler.
+
+H_0: ^p_1 - ^p_2 = 0
+
+Den alternative hypotesen H_a er at gruppene Fan og Fast følge har større andeler for brukere i gruppen med barneprofiler enn gruppen uten barneprofiler.
+
+H_a: ^p_1 - ^p_2 < 0
+
+Gitt et 95 %-konfidensintervall forkastes nullhypotesen til fordel for den alternative hypotesen hvis hvis teststatistikken Z < -1,645
+
+#+begin_src python :results replace
+  test_df = df[df.nrkService != "nrksuper"]
+  test_df = test_df[["nrkService","profileCount"]].join(test_df.loc[:,"Fan":"Slår opp"].mul(test_df["Brukere per gruppe"], axis="rows"))
+  test_df = test_df.groupby(["nrkService",test_df.profileCount > 0]).sum().loc[:,"Fan":"Slår opp"]
+  # Beregner proporsjonene, jf. https://online.stat.psu.edu/stat415/lesson/9/9.4
+  p1_hat = test_df.xs(False, level=1)
+  p2_hat = test_df.xs(True, level=1)
+  p_hat = p1_hat+p2_hat
+  n1 = p1_hat.sum(axis=1)
+  n2 = p2_hat.sum(axis=1)
+  p1_hat = p1_hat.div(n1, axis="rows")
+  p2_hat = p2_hat.div(n2, axis="rows")
+  p_hat = p_hat.div(p_hat.sum(axis=1), axis="rows")
+  pd.concat([p1_hat.assign(profileCount=False),p2_hat.assign(profileCount=True)]).reset_index().set_index(["nrkService","profileCount"]).sort_index(level=0)
+#+end_src
+
+#+RESULTS:
+:                               Fan  Fast Følge  Langdistanse  One-Night-Stand  Slår opp
+: nrkService profileCount                                                               
+: nrkno      False         0.194195    0.053184      0.067076         0.081262  0.604282
+:            True          0.166582    0.046405      0.069214         0.092011  0.625788
+: nrkradio   False         0.072032    0.048953      0.053694         0.054775  0.770546
+:            True          0.065596    0.051433      0.057758         0.057893   0.76732
+: nrktv      False         0.170194    0.114911      0.130435         0.132195  0.452265
+:            True          0.210221     0.13151        0.1359         0.129766  0.392603
+
+#+begin_src python :results replace
+  Z=(p1_hat-p2_hat).div(np.sqrt((p_hat*(1-p_hat)).mul((1/n1+1/n2),axis="rows")), axis="rows")
+  Z
+#+end_src
+
+#+RESULTS:
+:                   Fan  Fast Følge  Langdistanse  One-Night-Stand   Slår opp
+: nrkService                                                                 
+: nrkno       32.962632   14.276394     -4.000355       -18.313328 -20.651819
+: nrkradio    11.737251   -5.373923     -8.419267        -6.406301   3.595522
+: nrktv      -49.390451  -24.223379     -7.594685         3.366529  56.310361
+
+#+begin_src python :results replace
+  Z.apply(lambda x: norm().cdf(x))
+#+end_src
+
+#+RESULTS:
+:             Fan     Fast Følge  Langdistanse  One-Night-Stand      Slår opp
+: nrkService                                                                 
+: nrkno       1.0   1.000000e+00  3.162380e-05     3.239294e-75  4.700651e-95
+: nrkradio    1.0   3.852090e-08  1.894229e-17     7.454620e-11  9.998381e-01
+: nrktv       0.0  6.309587e-130  1.542707e-14     9.996194e-01  1.000000e+00
+
+Fra tabellen over ser man at nullhypotesen forkastes for NRK TV, men ikke for nrk.no og NRK Radio. I klartekst betyr det at det er en større andel av høylojale brukere blant dem med barneprofiler som bruker NRK TV enn brukere uten barneprofiler. Dette gjelder ikke for nrk.no og NRK Radio.
+
+Grunnen til dette kan være at med profilvelger på NRK TV vil kanskje feilvelging av profiler resultere i at det registreres besøk og aktivitet som gangner lojalitetsmålet. Ved at det er flere brukere av en TV-skjerm skjer dette muligens hyppigere. Det er kjent fra undersøkelsen av NRK TV-bruk på mobil og TV-skjerm at ca. opp mot ti prosent av besøkene på Tizen registreres med flere brukere per dag.

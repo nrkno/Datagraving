@@ -1,0 +1,16 @@
+# Created 2024-12-10 ti. 15:26
+#+options: date: nil
+#+options: author: nil
+#+title: Datagraving
+#+author: Emil
+#+startup: fold
+#+export_file_name: readme.org
+* Oppsummering av kaptitlene
+** Forskjell i lojalitet for brukere med og uten barneprofiler
+Her skal jeg undersøke om det er en en forskjell i lojaliteten mellom brukere som er eier av én eller flere barneprofiler, og brukere som ikke er det. Jeg vil gjøre det separat for NRK TV, NRK Radio og NRK.no.
+*** Hovedfunn
+Andelen brukere som kategoriseres som fan, fast følge eller langdistanse er høyere på NRK TV for brukere med barneprofiler enn brukere uten. Skillet er på henholdsvis 4 %-poeng, 1,6 %-poeng og 0,55 %-poeng. Alle forskjellene er statistisk signifikante.
+
+På nrk.no er det en større andel brukere med barneprofiler blant langdistanse-, one night stand- og slår opp-brukerne. Skillet er på henholdsvis 2,2 %-poeng, 1,1 %-poeng og 2,1 %-poeng. Alle forskjellene er statistisk signifikante.
+
+NRK Radio har størst andel brukere med barneprofil blant fast følge-, langdistanse og one night stand-brukerne med et skille på henholdsvis 2,5 %-poeng, 0,4 %-poeng og 0,3 %-poeng. Disse forskjellene er også signifikante.

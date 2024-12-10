@@ -1,0 +1,8 @@
+#+STARTUP: fold
+#+EXPORT_FILE_NAME: readme.org
+#+OPTIONS: date: nil
+#+OPTIONS: author: nil
+#+TITLE: Datagraving
+
+* Oppsummering av kaptitlene
+#+INCLUDE: "./kapittel/Brukerlojalitet_med_og_uten_barn/readme.org::#brukerlojalitet"

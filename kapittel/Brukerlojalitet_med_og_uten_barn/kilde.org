@@ -1,11 +1,52 @@
-#+PROPERTY: header-args:python :session *Python* :tangle kode.py :results silent
-* Forskjell i lojalitet for brukere med og uten barneprofiler
+#+export_file_name: readme.org
+#+OPTIONS: date: nil
+#+OPTIONS: author: nil
+#+TITLE: Brukerlojalitet for brukere med og uten barneprofiler
+#+PROPERTY: header-args:python :session *Python* :tangle kode.py :results silent :exports both
 
-Her skal jeg undersøke om det er en en forskjell i lojaliteten mellom brukere som er eier av én eller flere barneprofiler og brukere som ikke er det. Jeg vil gjøre det separat for NRK TV, NRK Radio og NRK.no.
+#+begin_src emacs-lisp :exports results :results none
+  ;; Dette gjør om bigquery-blokker til sql-blokker (for å få fargelegging på teksten)
+  ;; og fjerner results-nøkkelordet (som gjemmer resultatene på github)
+  (defun bytt-bigquery-til-sql (s backend info)
+    (replace-regexp-in-string "bigquery" "sql" s))
+
+  (defun fjern-resultatmerke (s backend info)
+    (replace-regexp-in-string "#\\+results:[ ]+" "" s))
+
+  (defun tusenskille-og-komma (s backend info)
+    (while 
+    (let ((num (number-to-string s)))
+      (string-match "\\([0-9]+\\)\\.\\([0-9]+\\)" num)
+      (let ((hel (match-string 1 num))
+  	  (dec (if (string= (match-string 2 num) ".0") "" (match-string 2 num))))
+        (while (string-match "\\([0-9]+\\)\\([0-9][0-9][0-9].*\\)" hel)
+  	(setq hel (concat
+  		   (match-string 1 hel) " "
+  		   (match-string 2 hel))))
+        (concat hel "," dec)))))
+
+  (add-to-list 'org-export-filter-src-block-functions
+      	     'bytt-bigquery-til-sql)
+  (add-to-list 'org-export-filter-body-functions
+      	     'fjern-resultatmerke)
+  ;; (add-to-list 'org-export-filter-table-functions
+  ;;    	     'tusenskille-og-komma)
+
+#+end_src
+
+* Forskjell i lojalitet for brukere med og uten barneprofiler
+:PROPERTIES:
+:CUSTOM_ID: brukerlojalitet
+:END:
+
+Her skal jeg undersøke om det er en en forskjell i lojaliteten mellom brukere som er eier av én eller flere barneprofiler, og brukere som ikke er det. Jeg vil gjøre det separat for NRK TV, NRK Radio og NRK.no.
 ** Hovedfunn
-Når jeg utfører testen for at andelen høylojale brukere er større for brukere med barneprofiler enn brukere uten barneprofiler, finner jeg:
-- NRK TV 
-** Fullstendig gjennomgang
+Andelen brukere som kategoriseres som fan, fast følge eller langdistanse er høyere på NRK TV for brukere med barneprofiler enn brukere uten. Skillet er på henholdsvis 4 %-poeng, 1,6 %-poeng og 0,55 %-poeng. Alle forskjellene er statistisk signifikante.
+
+På nrk.no er det en større andel brukere med barneprofiler blant langdistanse-, one night stand- og slår opp-brukerne. Skillet er på henholdsvis 2,2 %-poeng, 1,1 %-poeng og 2,1 %-poeng. Alle forskjellene er statistisk signifikante.
+
+NRK Radio har størst andel brukere med barneprofil blant fast følge-, langdistanse og one night stand-brukerne med et skille på henholdsvis 2,5 %-poeng, 0,4 %-poeng og 0,3 %-poeng. Disse forskjellene er også signifikante.
+* Fullstendig gjennomgang
 #+name: spørring
 #+begin_src bigquery
   WITH
@@ -105,8 +146,11 @@ Gitt et 95 %-konfidensintervall forkastes nullhypotesen til fordel for den alter
 
 #+begin_src python :results replace
   test_df = df[df.nrkService != "nrksuper"]
-  test_df = test_df[["nrkService","profileCount"]].join(test_df.loc[:,"Fan":"Slår opp"].mul(test_df["Brukere per gruppe"], axis="rows"))
-  test_df = test_df.groupby(["nrkService",test_df.profileCount > 0]).sum().loc[:,"Fan":"Slår opp"]
+  test_df = test_df[["nrkService","profileCount"]] \\
+      .join(test_df.loc[:,"Fan":"Slår opp"].mul(
+          test_df["Brukere per gruppe"], axis="rows"))
+  test_df = test_df.groupby(["nrkService",test_df.profileCount > 0])\\
+                   .sum().loc[:,"Fan":"Slår opp"]
   # Beregner proporsjonene, jf. https://online.stat.psu.edu/stat415/lesson/9/9.4
   p1_hat = test_df.xs(False, level=1)
   p2_hat = test_df.xs(True, level=1)
@@ -116,7 +160,11 @@ Gitt et 95 %-konfidensintervall forkastes nullhypotesen til fordel for den alter
   p1_hat = p1_hat.div(n1, axis="rows")
   p2_hat = p2_hat.div(n2, axis="rows")
   p_hat = p_hat.div(p_hat.sum(axis=1), axis="rows")
-  pd.concat([p1_hat.assign(profileCount=False),p2_hat.assign(profileCount=True)]).reset_index().set_index(["nrkService","profileCount"]).sort_index(level=0)
+  pd.concat([p1_hat.assign(profileCount=False),
+             p2_hat.assign(profileCount=True)]) \\
+    .reset_index() \\
+    .set_index(["nrkService","profileCount"]) \\
+    .sort_index(level=0)
 #+end_src
 
 #+RESULTS:
@@ -154,4 +202,4 @@ Gitt et 95 %-konfidensintervall forkastes nullhypotesen til fordel for den alter
 
 Fra tabellen over ser man at nullhypotesen forkastes for NRK TV, men ikke for nrk.no og NRK Radio. I klartekst betyr det at det er en større andel av høylojale brukere blant dem med barneprofiler som bruker NRK TV enn brukere uten barneprofiler. Dette gjelder ikke for nrk.no og NRK Radio.
 
-Grunnen til dette kan være at med profilvelger på NRK TV vil kanskje feilvelging av profiler resultere i at det registreres besøk og aktivitet som gangner lojalitetsmålet. Ved at det er flere brukere av en TV-skjerm skjer dette muligens hyppigere. Det er kjent fra undersøkelsen av NRK TV-bruk på mobil og TV-skjerm at ca. opp mot ti prosent av besøkene på Tizen registreres med flere brukere per dag.
+Grunnen til dette kan være at med profilvelger på NRK TV vil kanskje feilvelging av profiler resultere i at det registreres besøk og aktivitet som gangner lojalitetsmålet. Ved at det er flere brukere av en TV-skjerm skjer dette muligens hyppigere. Det er kjent fra undersøkelsen av NRK TV-bruk på mobil og TV-skjerm at opp mot cirka ti prosent av besøkene på Tizen registreres med flere brukere per dag.

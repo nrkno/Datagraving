@@ -1,4 +1,4 @@
-# Created 2024-12-10 ti. 15:26
+# Created 2024-12-13 fr. 14:56
 #+options: date: nil
 #+options: author: nil
 #+title: Datagraving
@@ -14,3 +14,15 @@ Andelen brukere som kategoriseres som fan, fast følge eller langdistanse er hø
 På nrk.no er det en større andel brukere med barneprofiler blant langdistanse-, one night stand- og slår opp-brukerne. Skillet er på henholdsvis 2,2 %-poeng, 1,1 %-poeng og 2,1 %-poeng. Alle forskjellene er statistisk signifikante.
 
 NRK Radio har størst andel brukere med barneprofil blant fast følge-, langdistanse og one night stand-brukerne med et skille på henholdsvis 2,5 %-poeng, 0,4 %-poeng og 0,3 %-poeng. Disse forskjellene er også signifikante.
+** Hvordan kan vi bygge vaner hos brukerne våre?
+I forkant av analysedagene i desember 2024 har det vært snakk om å bygge vaner hos brukerne våre. Jeg har gjort et dykk i litteraturen for å prøve å finne ut hva som skal til for å faktisk gjøre dette.
+*** Hovedfunn
+Vaner dannes ved at en handling blir utført i forbindelse med en kontekst gjentatte ganger, og at dette fører til en belønning. Når vanen er etablert vil konteksten fungere som en utløser for vanen. Enkle handlinger blir lettere til vaner en komplekse handlinger (handlinger som krever planlegging eller sterk vilje). I tilfeller der viljen er svak eller man er under stress vil handlingen i større grad være bestemt av vanen. Vanebyggingen blir ikke forstyrret av at handlingen uteblir fra tid til annen.
+
+Med dette i bakhodet kan eksempler på vaner bygget i NRKs tjenester være:
+- NRK Radio som radiovekkerklokke på mobilen.
+- Push-varsel når en bruker befinner seg i en situasjon som repeteres flere ganger i uken, for eksempel på kollektivtransport til eller fra jobb.
+- Et brukergrensesnitt som omfavner spillifisering av tjenesten vil kunne gi kortsiktig belønning.
+- Været sjekkes hver morgen før man reiser på jobb. Kan man finne måter å lede brukere fra Yr inn i andre tjenester?
+- Middagen skal planlegges, og der er da naturlig å hente inspirasjon fra NRK Mat.
+  

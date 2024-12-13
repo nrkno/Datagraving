@@ -1,0 +1,67 @@
+# Created 2024-12-13 fr. 12:45
+#+options: author:nil
+#+title: Vaner
+#+export_file_name: readme.org
+* Hvordan kan vi bygge vaner hos brukerne våre?
+:PROPERTIES:
+:CUSTOM_ID: vaner
+:END:
+
+I forkant av analysedagene i desember 2024 har det vært snakk om å bygge vaner hos brukerne våre. Jeg har gjort et dykk i litteraturen for å prøve å finne ut hva som skal til for å faktisk gjøre dette.
+
+** Hovedfunn
+Vaner dannes ved at en handling blir utført i forbindelse med en kontekst gjentatte ganger, og at dette fører til en belønning. Når vanen er etablert vil konteksten fungere som en utløser for vanen. Enkle handlinger blir lettere til vaner en komplekse handlinger (handlinger som krever planlegging eller sterk vilje). I tilfeller der viljen er svak eller man er under stress vil handlingen i større grad være bestemt av vanen. Vanebyggingen blir ikke forstyrret av at handlingen uteblir fra tid til annen.
+
+Med dette i bakhodet kan eksempler på vaner bygget i NRKs tjenester være:
+- NRK Radio som radiovekkerklokke på mobilen.
+- Push-varsel når en bruker befinner seg i en situasjon som repeteres flere ganger i uken, for eksempel på kollektivtransport til eller fra jobb.
+- Et brukergrensesnitt som omfavner spillifisering av tjenesten vil kunne gi kortsiktig belønning.
+- Været sjekkes hver morgen før man reiser på jobb. Kan man finne måter å lede brukere fra Yr inn i andre tjenester?
+- Middagen skal planlegges, og der er da naturlig å hente inspirasjon fra NRK Mat.
+* Overblikk
+I forkant av analysedagene i desember 2024 har det vært snakk om å bygge vaner hos brukerne våre. Jeg har gjort et dykk i litteraturen for å prøve å finne ut hva som skal til for å faktisk gjøre dette.
+
+På [[https://en.wikipedia.org/wiki/Habit][wikipedia]] kan man lese om vaner at vanebygging er prosessen der en oppførsel blir automatisert gjennom repetisjon. At oppførselen er automatisert betyr at den kjennetegnes av én eller flere av kjennetegnene: effektivitet, det gjøres ubevisst, uten intensjon og utenfor kontroll[fn:-1-1].
+
+Det står videre at denne prosessen kan være tidkrevende, fra 18 til 254 dager med gjennomsnitlig 66 dager i følge Lally et al. På wikipedia står det listet opp tre hovedkomponenter i byggingen av vaner:
+
+- konteksten :: situasjonen man befinner seg i, tid på dagen, stedet man er, noe annet som fyrer av oppførselen
+- repetisjon :: oppførselen som skal bli til en vane gjentas gang på gang
+- belønning :: en positiv følelse ved å utføre oppførselen forsterker "vaneløkken". Usikre belønninger eller belønninger som kommer under veis forsterker vanedanningen.
+
+Faktorer som påvirker vanebygging:
+- Gjennomføringen av daglige mål er grunnlaget for byggingen av vaner.
+- Konteksten som løper foran handlingen man gjør for å oppnå målet, blir en utløser for vanen.
+- Gjennom repetisjon av samme kontekst og handling, blir vanen styrket.
+- Belønning styrker vanen, men det er uklart for meg  hvor vidt den skal komme med det samme eller på sikt. I artiklene snakkes det om "intermediate reward".
+- Komplekse handlinger er vanskeligere å gjøre til vaner. Kompleksiteten øker hvis det dreier seg om handlinger som for eksempel krever planlegging.
+- Vanebyggingen blir ikke vesentlig forsyrret dersom man dropper handlingen fra tid til annen.
+
+Eksempler på vaner som kan bygges i NRKs tjenester:
+- NRK Radio som radiovekkerklokke på mobilen.
+- Push-varsel når en bruker befinner seg i en situasjon som repeteres flere ganger i uken, for eksempel på kollektivtransport til eller fra jobb.
+- Et brukergrensesnitt som omfavner spillifisering av tjenesten vil kunne gi kortsiktig belønning.
+- Været sjekkes hver morgen før man reiser på jobb. Kan man finne måter å lede brukere fra Yr inn i andre tjenester?
+- Middagen skal planlegges, og der er da naturlig å hente inspirasjon fra NRK Mat.
+
+[fn:-1-1] Bargh, J. A. (1994). The four horsemen of automaticity: awareness, intention, efficiency, and control in social cognition. In R.S. Wyer, &
+T. K. Srull (Eds.), Handbook of social cognition: Vol 1 basic processes (pp. 1–40). Hove: Lawrence Erlbaun Associates Publishers 
+* Hvor lang tid tar det å bygge en vane?
+En studie utført av Lally /et al./[fn:-2-1] tar for seg hvor lang tid det tar å skape en ny vane i dagliglivet (til forskjell fra et laboratorium).
+
+Automatiseringen av en type oppførsel (byggingen av vanen) som funksjon av antall repetisjoner er trolig ikke lineært, siden man på et tidspunkt ikke vil klare å automatisere noe mer. Det er derfor oppfatningen at automatiseringen etter et visst antall repetisjoner vil havne på et platå. Det antas også at repetisjoner tidlig i vanebyggingen har større effekt enn senere. Denne studien tar for seg individuell respons og oppførsel fra dagliglivet. 
+
+Flere studier som det referres til i denne studien indikerer at kompleks oppførsel er mer krevende å automatisere enn simpel oppførsel.
+
+[fn:-2-1] https://repositorio.ispa.pt/bitstream/10400.12/3364/1/IJSP_998-1009.pdf 
+* Metastudie av psykologien rundt vaner
+I (Wood og Rünger 2015)[fn:-3-1] går forfatterne gjennom tilstanden på vaneforskningen per 2015. Mine inntrykk etter å ha lest denne er at:
+- Vanebygging er nært beslektet med daglig måloppnåelse. Det betyr at vaner bygges ved at man oppfører seg på en måte som skal hjelpe en å nå et mål. Et eksempel på dette er å velge sykkel fremfor et annet transportmiddel på vei til og fra jobb. Et annet eksempel er å sette på TV-en for å se nyheter.
+- En veldig sterk vane vil kunne aktiveres selv om man bare minnes på situasjonen den er knyttet til. Et bilde, en lyd, en lukt kan avfyre et minne om situasjonen og dermed utløse vanen.
+- Med sterk nok motivasjon kan man bryte ut av en vane.
+- Vaner dannes gjennom repetisjon av en handling i tilknytning til en situasjon og forsterkes av belønning (i form av dopamin til hjernen).
+- Planlegging er skadelig for vanedanning. Oppgaver og oppførsel som krever planlegging blir ikke til en vane selv med repetisjon.
+- Vaner kan sies å være dannet når den fortsetter selv etter at belønningen reduseres eller uteblir.
+- Under stress, svak vilje, og redusert evne til å utføre handlingen vil vaner trumfe målsøking. Brukere som ikke har for vane å bruke NRK må dermed få filje, tid og evne til å velge NRK.
+
+[fn:-3-1] https://www.annualreviews.org/docserver/fulltext/psych/67/1/annurev-psych-122414-033417.pdf?expires=1732870989&id=id&accname=guest&checksum=7EC995F7C275A29CFF9FFEE2B3384208 
